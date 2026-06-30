@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masterclass Tracker</title>
+  <style>
+    :root {
+      --ef-dark-purple: #260A72;
+      --ef-purple: #4007AD;
+      --ef-light-purple: #daccf0;
+      --ef-yellow: #FFDF6B;
+      --ef-grey-1: #B1B9C4;
+      --ef-grey-2: #C7CDD5;
+      --ef-grey-3: #E8EAEE;
+      --ef-near-black: #1A1A1A;
+      --ef-gradient-dark: linear-gradient(135deg, #25095B, #8A3AFF, #C41294);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--ef-grey-3);
+      color: var(--ef-near-black);
+      padding: 0 0 40px;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--ef-gradient-dark);
+      padding: 28px 40px 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header-logo {
+      height: 36px;
+      width: auto;
+      filter: brightness(0) invert(1);
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 32px;
+      background: rgba(255,255,255,0.3);
+    }
+
+    .header-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.2px;
+    }
+
+    .header-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 2px;
+    }
+
+    .header-date {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      white-space: nowrap;
+    }
+
+    /* ── Page body ── */
+    .page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 28px 24px 0;
+    }
+
+    /* ── Pipeline strips ── */
+    .process-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--ef-grey-1);
+      margin-bottom: 8px;
+    }
+
+    .pipelines {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+      align-items: stretch;
+    }
+
+    .pipeline-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .pipeline-group-creation { flex: 5; }
+    .pipeline-group-promotion { flex: 3; }
+
+    .pipeline-phase-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--ef-grey-1);
+    }
+
+    .process {
+      display: flex;
+      align-items: stretch;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(38,10,114,0.12);
+      height: 100%;
+    }
+
+    .step {
+      flex: 1;
+      padding: 12px 16px;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 24px solid transparent;
+      border-bottom: 24px solid transparent;
+      z-index: 2;
+    }
+
+    /* Creation stages */
+    .step-c1 { background: #260A72; }
+    .step-c1::after { border-left: 12px solid #260A72; }
+
+    .step-c2 { background: #350F8F; padding-left: 24px; }
+    .step-c2::after { border-left: 12px solid #350F8F; }
+
+    .step-c3 { background: #4007AD; padding-left: 24px; }
+    .step-c3::after { border-left: 12px solid #4007AD; }
+
+    .step-c4 { background: #5A1CC5; padding-left: 24px; }
+    .step-c4::after { border-left: 12px solid #5A1CC5; }
+
+    .step-c5 { background: #7B3AE0; padding-left: 24px; }
+
+    /* Promotion stages */
+    .step-p1 { background: #0e7490; }
+    .step-p1::after { border-left: 12px solid #0e7490; }
+
+    .step-p2 { background: #0891b2; padding-left: 24px; }
+    .step-p2::after { border-left: 12px solid #0891b2; }
+
+    .step-p3 { background: #06b6d4; padding-left: 24px; }
+
+    .step-num {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 3px;
+    }
+
+    .step-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* ── Table ── */
+    .table-wrap {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(38,10,114,0.10);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      background: var(--ef-dark-purple);
+      color: rgba(255,255,255,0.85);
+      text-align: left;
+      padding: 11px 14px;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      white-space: nowrap;
+    }
+
+    /* Promotion column group header */
+    .th-group-promo {
+      background: #0e7490;
+      text-align: center;
+    }
+
+    .th-promo {
+      background: #0e7490;
+      text-align: center;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--ef-grey-3);
+      transition: background 0.12s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #faf9ff; }
+
+    td {
+      padding: 12px 14px;
+      vertical-align: top;
+      line-height: 1.45;
+    }
+
+    .td-promo {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .contact-name {
+      font-weight: 600;
+      color: var(--ef-near-black);
+      white-space: nowrap;
+    }
+
+    .company-link {
+      display: inline-block;
+      margin-top: 2px;
+      font-size: 11.5px;
+      color: var(--ef-purple);
+      text-decoration: none;
+    }
+    .company-link:hover { text-decoration: underline; }
+
+    .company-plain {
+      display: inline-block;
+      margin-top: 2px;
+      font-size: 11.5px;
+      color: var(--ef-purple);
+    }
+
+    .ref-badge {
+      display: inline-block;
+      background: var(--ef-light-purple);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ef-dark-purple);
+    }
+
+    .topic-title {
+      font-weight: 600;
+      color: var(--ef-near-black);
+    }
+
+    .topic-hint {
+      font-size: 11.5px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    /* Stage badges */
+    .badge {
+      display: inline-block;
+      border-radius: 5px;
+      padding: 3px 9px;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      margin-bottom: 4px;
+    }
+
+    .badge-stopped    { background: #fee2e2; color: #b91c1c; }
+    .badge-scheduling { background: #f3e8ff; color: #6b21a8; }
+    .badge-creating   { background: #ede9fe; color: var(--ef-purple); }
+    .badge-editing    { background: #fff8db; color: #92600a; border: 1px solid #FFDF6B; }
+    .badge-review     { background: var(--ef-light-purple); color: var(--ef-dark-purple); }
+    .badge-published  { background: #d1fae5; color: #065f46; }
+
+    .stage-notes {
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .review-date {
+      font-size: 12px;
+      color: var(--ef-near-black);
+      font-weight: 600;
+    }
+
+    .review-date-empty {
+      font-size: 12px;
+      color: var(--ef-grey-1);
+      font-style: italic;
+    }
+
+    /* Promotion status indicators */
+    .promo-done {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: #d1fae5;
+      border-radius: 50%;
+      font-size: 13px;
+      color: #065f46;
+    }
+
+    .promo-pending {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: var(--ef-grey-3);
+      border-radius: 50%;
+      font-size: 11px;
+      color: var(--ef-grey-1);
+    }
+
+    .promo-inprogress {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: #fff8db;
+      border: 1px solid #FFDF6B;
+      border-radius: 50%;
+      font-size: 11px;
+      color: #92600a;
+      font-weight: 700;
+    }
+
+    .promo-na {
+      font-size: 11px;
+      color: var(--ef-grey-2);
+    }
+
+    tr.row-stopped { background: #fef2f2; }
+    tr.row-stopped:hover { background: #fee9e9; }
+
+    /* ── Footer ── */
+    footer {
+      max-width: 1280px;
+      margin: 16px auto 0;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .footer-legend span {
+      font-size: 10.5px;
+      color: var(--ef-grey-1);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 4px;
+    }
+
+    footer .badge { margin-bottom: 0; }
+
+    .footer-date {
+      font-size: 11px;
+      color: var(--ef-grey-1);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-left">
+      <img
+        src="https://cdn.prod.website-files.com/657c8f6f3ca9b1f45c4ccf3e/6876720bd3922a45c3177e59_everflow_R_colored-p-3200.png"
+        alt="Everflow"
+        class="header-logo"
+      />
+      <div class="header-divider"></div>
+      <div>
+        <div class="header-title">Masterclass Tracker</div>
+        <div class="header-sub">Co-Marketing — Masterclass Pipeline</div>
+      </div>
+    </div>
+    <div class="header-date">Updated June 30, 2026</div>
+  </header>
+
+  <div class="page">
+
+    <!-- Pipeline strips -->
+    <div class="process-label">Masterclass Lifecycle</div>
+    <div class="pipelines">
+
+      <div class="pipeline-group pipeline-group-creation">
+        <div class="pipeline-phase-label">Creation</div>
+        <div class="process">
+          <div class="step step-c1">
+            <div class="step-num">Stage 1</div>
+            <div class="step-title">Scheduling</div>
+          </div>
+          <div class="step step-c2">
+            <div class="step-num">Stage 2</div>
+            <div class="step-title">Call Hosted</div>
+          </div>
+          <div class="step step-c3">
+            <div class="step-num">Stage 3</div>
+            <div class="step-title">Creating</div>
+          </div>
+          <div class="step step-c4">
+            <div class="step-num">Stage 4</div>
+            <div class="step-title">Editing</div>
+          </div>
+          <div class="step step-c5">
+            <div class="step-num">Stage 5</div>
+            <div class="step-title">Team Review</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipeline-group pipeline-group-promotion">
+        <div class="pipeline-phase-label">Promotion</div>
+        <div class="process">
+          <div class="step step-p1">
+            <div class="step-num">Stage 6</div>
+            <div class="step-title">Site</div>
+          </div>
+          <div class="step step-p2">
+            <div class="step-num">Stage 7</div>
+            <div class="step-title">Newsletter</div>
+          </div>
+          <div class="step step-p3">
+            <div class="step-num">Stage 8</div>
+            <div class="step-title">Social</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Masterclass table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2">Contact</th>
+            <th rowspan="2">Company</th>
+            <th rowspan="2">Masterclass Topic / Title</th>
+            <th rowspan="2">Ref</th>
+            <th rowspan="2">Creation Stage</th>
+            <th rowspan="2">Next Action Needed</th>
+            <th rowspan="2">Published ETA</th>
+            <th colspan="3" class="th-group-promo" style="text-align:center; border-bottom: 1px solid rgba(255,255,255,0.2);">Promotion</th>
+          </tr>
+          <tr>
+            <th class="th-promo">Site</th>
+            <th class="th-promo">Newsletter</th>
+            <th class="th-promo">Social</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td class="contact-name">Zach Measures</td>
+            <td><span class="company-plain">Everflow</span></td>
+            <td>
+              <div class="topic-title">How to Build a High-Yield Partner Pipeline on LinkedIn (Without Sending a Single Cold Email)</div>
+            </td>
+            <td><span class="ref-badge">Internal</span></td>
+            <td>
+              <span class="badge badge-published">Published</span>
+            </td>
+            <td style="font-size:12px; color:#374151;">Jordan Barney (newsletter)<br/>Krista Kellogg (social)</td>
+            <td><span class="review-date-empty">N/A</span></td>
+            <td class="td-promo"><a href="https://www.everflow.io/masterclass/how-to-build-a-high-yield-partner-pipeline-on-linkedin-without-sending-a-single-cold-email" target="_blank" class="promo-done" title="View masterclass">✓</a></td>
+            <td class="td-promo"><span class="promo-inprogress" title="MC-2009 — In Progress">~</span></td>
+            <td class="td-promo"><span class="promo-inprogress" title="MC-2010 — In Progress">~</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">James Bannerman</td>
+            <td><span class="company-plain">The Reward Collection</span></td>
+            <td>
+              <div class="topic-title">&mdash;</div>
+            </td>
+            <td><span class="ref-badge">Francisco</span></td>
+            <td>
+              <span class="badge badge-scheduling">Scheduling</span>
+              <div class="stage-notes">Info Gather stage (MC-2016). Referred by Francisco Bervis. Pat Franklin executing call.</div>
+            </td>
+            <td style="font-size:12px; color:#374151;">Pat Franklin</td>
+            <td><span class="review-date-empty">TBD</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Kelly Basinger</td>
+            <td><span class="company-plain">Taboola</span></td>
+            <td>
+              <div class="topic-title">&mdash;</div>
+              <div class="topic-hint">Ad network</div>
+            </td>
+            <td><span class="ref-badge">Laurie</span></td>
+            <td>
+              <span class="badge badge-scheduling">Scheduling</span>
+              <div class="stage-notes">Info Gather stage (MC-2017). Working on scheduling the masterclass call.</div>
+            </td>
+            <td style="font-size:12px; color:#374151;">Tony Cohn</td>
+            <td><span class="review-date-empty">TBD</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Yulia Petruk / Nickolas Rekeda</td>
+            <td><span class="company-plain">MGID</span></td>
+            <td>
+              <div class="topic-title">&mdash;</div>
+            </td>
+            <td><span class="ref-badge">Krista Kellogg</span></td>
+            <td>
+              <span class="badge badge-scheduling">Scheduling</span>
+            </td>
+            <td style="font-size:12px; color:#374151;">Tony Cohn</td>
+            <td><span class="review-date-empty">TBD</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Kurt Bell</td>
+            <td><span class="company-plain">Dash.fi</span></td>
+            <td>
+              <div class="topic-title">&mdash;</div>
+            </td>
+            <td><span class="ref-badge">Francisco</span></td>
+            <td>
+              <span class="badge badge-editing">Editing</span>
+              <div class="stage-notes">Draft sent to Dash.fi. Nicole: "looked great," fact-check pending. <a href="https://docs.google.com/document/d/1QjigxcFPNbUjH192UoCuqbksAOaoBXH5q2OTmRtYuig/edit?tab=t.0#heading=h.y2smoyrsz017" target="_blank" style="color: var(--ef-purple);">View draft</a></div>
+            </td>
+            <td style="font-size:12px; color:#374151;">Dash.fi (fact-check)</td>
+            <td><span class="review-date-empty">TBD</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Anna Gomez</td>
+            <td><span class="company-plain">PartnerBoost</span></td>
+            <td>
+              <div class="topic-title">&mdash;</div>
+              <div class="topic-hint">Solutions to boost Amazon sales</div>
+            </td>
+            <td><span class="ref-badge">Remy</span></td>
+            <td>
+              <span class="badge badge-review">Team Review</span>
+              <div class="stage-notes">Brent approved edits 6/25. Awaiting team review before publish.</div>
+            </td>
+            <td style="font-size:12px; color:#374151;">Tony Cohn</td>
+            <td><span class="review-date-empty">TBD</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending" title="MC-2014 — Info Gather (Jordan Barney)">—</span></td>
+            <td class="td-promo"><span class="promo-pending" title="MC-2015 — Info Gather (Krista Kellogg)">—</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Ryan Ludlow</td>
+            <td><span class="company-plain">NewsBreak</span></td>
+            <td>
+              <div class="topic-title">&mdash;</div>
+              <div class="topic-hint">Local news publisher</div>
+            </td>
+            <td><span class="ref-badge">Laurie</span></td>
+            <td>
+              <span class="badge badge-editing">Final Edits</span>
+              <div class="stage-notes">Partner feedback received 6/23. Brent incorporating revisions. Due 7/1. <a href="https://docs.google.com/document/d/1zInwbwiuMyfWv-zrqTB4APjQGMiVdYYCfq_l9FAyOAo/edit?tab=t.0#heading=h.s9u1081kp6tf" target="_blank" style="color: var(--ef-purple);">View draft</a></div>
+            </td>
+            <td style="font-size:12px; color:#374151;">Brent Barnhart</td>
+            <td><span class="review-date">7/1</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-inprogress" title="Newsletter — Draft/Edits (Jordan Barney)">~</span></td>
+            <td class="td-promo"><span class="promo-pending" title="MC-2013 — Info Gather (Krista Kellogg)">—</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Denis Babaev</td>
+            <td><a href="https://scaleyourweb.com" class="company-link" target="_blank">scaleyourweb.com</a></td>
+            <td>
+              <div class="topic-title">&mdash;</div>
+            </td>
+            <td><span class="ref-badge">Tony Cohn</span></td>
+            <td>
+              <span class="badge badge-creating">Creating</span>
+              <div class="stage-notes">In progress. Tony Cohn. Due 8/6.</div>
+            </td>
+            <td style="font-size:12px; color:#374151;">Tony Cohn</td>
+            <td><span class="review-date">8/6</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Marshall Nyman</td>
+            <td><span class="company-plain">NYMO</span></td>
+            <td>
+              <div class="topic-title">&mdash;</div>
+            </td>
+            <td><span class="ref-badge">Laurie</span></td>
+            <td>
+              <span class="badge badge-creating">Creating</span>
+              <div class="stage-notes">Jordan Barney writing (MC-1903). Due 6/30.</div>
+            </td>
+            <td style="font-size:12px; color:#374151;">Jordan Barney</td>
+            <td><span class="review-date">6/30</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Cristian Ionescu</td>
+            <td><span class="company-plain">CatStats.ai</span></td>
+            <td>
+              <div class="topic-title">From Spreadsheet Wranglers to AI Orchestrators: Cristian Ionescu's Playbook for Affiliate Scale</div>
+            </td>
+            <td><span class="ref-badge">Michael</span></td>
+            <td>
+              <span class="badge badge-review">Team Review</span>
+              <div class="stage-notes">Partner approved. Brent Barnhart to publish on site.</div>
+            </td>
+            <td style="font-size:12px; color:#374151;">Brent Barnhart</td>
+            <td><span class="review-date">7/3</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+            <td class="td-promo"><span class="promo-pending">—</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Joe Campanella</td>
+            <td><span class="company-plain">Complily</span></td>
+            <td>
+              <div class="topic-title">The AI Speed Trap: Joe Campanella on Automating Affiliate Compliance Before the Bots Catch You</div>
+            </td>
+            <td><span class="ref-badge">Laurie</span></td>
+            <td>
+              <span class="badge badge-published">Published</span>
+            </td>
+            <td style="font-size:12px; color:#374151;">Jordan Barney (newsletter)<br/>Krista Kellogg (social)</td>
+            <td><span class="review-date-empty">N/A</span></td>
+            <td class="td-promo"><a href="https://www.everflow.io/masterclass/the-ai-speed-trap-joe-campanella-on-automating-affiliate-compliance-before-the-bots-catch-you" target="_blank" class="promo-done" title="View masterclass">✓</a></td>
+            <td class="td-promo"><span class="promo-inprogress" title="MC-2011 — In Progress (Jordan Barney)">~</span></td>
+            <td class="td-promo"><span class="promo-inprogress" title="MC-2012 — In Progress (Krista Kellogg)">~</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Paco Blanco</td>
+            <td><span class="company-plain">MediaScale</span></td>
+            <td>
+              <div class="topic-title">Why Your Best Media Buyers Are Burning Cash: Reclaiming Wasted Budget with MediaScale's Automated Media Buying</div>
+            </td>
+            <td><span class="ref-badge">Ed</span></td>
+            <td>
+              <span class="badge badge-published">Published</span>
+            </td>
+            <td style="font-size:12px; color:#374151;">Jordan Barney (newsletter)<br/>Krista Kellogg (social)</td>
+            <td><span class="review-date-empty">N/A</span></td>
+            <td class="td-promo"><a href="https://www.everflow.io/masterclass/why-your-best-media-buyers-are-burning-cash-reclaiming-wasted-budget-with-mediascales-automated-media-buying" target="_blank" class="promo-done" title="View masterclass">✓</a></td>
+            <td class="td-promo"><span class="promo-inprogress" title="MC-2021 — In Progress (Jordan Barney)">~</span></td>
+            <td class="td-promo"><span class="promo-inprogress" title="MC-2022 — In Progress (Krista Kellogg)">~</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Michelle Mayes</td>
+            <td><span class="company-plain">Pushnami</span></td>
+            <td>
+              <div class="topic-title">From 48-Hour Bottlenecks to 20-Minute Fixes: How Michelle Mayes' Agentic Army Automates Campaign Engineering Audits</div>
+            </td>
+            <td><span class="ref-badge">Kristen Bell</span></td>
+            <td>
+              <span class="badge badge-published">Published</span>
+            </td>
+            <td style="font-size:12px; color:#374151;">Jordan Barney (newsletter)<br/>Krista Kellogg (social)</td>
+            <td><span class="review-date-empty">N/A</span></td>
+            <td class="td-promo"><a href="https://www.everflow.io/masterclass/from-48-hour-bottlenecks-to-20-minute-fixes-how-michelle-mayes-agentic-army-automates-campaign-engineering-audits" target="_blank" class="promo-done" title="View masterclass">✓</a></td>
+            <td class="td-promo"><span class="promo-inprogress" title="Newsletter — In Progress (Jordan Barney)">~</span></td>
+            <td class="td-promo"><span class="promo-inprogress" title="Social — In Progress (Krista Kellogg)">~</span></td>
+          </tr>
+
+          <tr>
+            <td class="contact-name">Matīss Maliks</td>
+            <td><a href="https://ltvx.ai/" class="company-link" target="_blank">ltvx.ai</a></td>
+            <td>
+              <div class="topic-title">Tripping at the Finish Line: How ltvx.ai Stops the Soft Declines Driving Your Top Affiliates Away</div>
+            </td>
+            <td><span class="ref-badge">Sam</span></td>
+            <td>
+              <span class="badge badge-published">Published</span>
+            </td>
+            <td style="font-size:12px; color:#374151;">Jordan Barney (newsletter)<br/>Krista Kellogg (social)</td>
+            <td><span class="review-date-empty">N/A</span></td>
+            <td class="td-promo"><a href="https://www.everflow.io/masterclass/tripping-at-the-finish-line-how-ltvx-ai-stops-the-soft-declines-driving-your-top-affiliates-away" target="_blank" class="promo-done" title="View masterclass">✓</a></td>
+            <td class="td-promo"><span class="promo-pending" title="MC-2018 — Info Gather (Jordan Barney)">—</span></td>
+            <td class="td-promo"><span class="promo-pending" title="MC-2019 — Info Gather (Krista Kellogg)">—</span></td>
+          </tr>
+
+
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /page -->
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-legend">
+      <span>Creation:</span>
+      <span class="badge badge-scheduling">Scheduling</span>
+      <span class="badge badge-creating">Creating</span>
+      <span class="badge badge-editing">Editing</span>
+      <span class="badge badge-review">Team Review</span>
+      <span class="badge badge-published">Published</span>
+      <span class="badge badge-stopped">Not Moving Forward</span>
+      &nbsp;&nbsp;
+      <span>Promotion:</span>
+      <span style="font-size:11px; color:#374151;">✓ = Done &nbsp; ~ = In Progress &nbsp; — = Pending</span>
+    </div>
+    <div class="footer-date">Generated June 24, 2026</div>
+  </footer>
+
+</body>
+</html>
